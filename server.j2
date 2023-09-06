@@ -1,0 +1,23 @@
+#!/bin/bash
+
+sudo bash <<EOF2
+{{ server.wg_install_cmd }}
+cat <<EOF> /etc/wireguard/wg0.conf
+[Interface]
+Address = {{ server.ip }}/32
+PrivateKey = {{ server.sk }}
+ListenPort = {{ server.port }}
+
+{% for client in clients %}
+[Peer]
+PublicKey = {{ client.pk }}
+AllowedIPs = {{ client.ip }}/32
+
+{% endfor %}
+
+EOF
+
+systemctl enable wg-quick@wg0
+systemctl restart wg-quick@wg0
+
+EOF2
