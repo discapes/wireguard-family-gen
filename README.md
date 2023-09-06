@@ -10,11 +10,6 @@ It also creates Wireguard configurations for the other devices, which have only 
 
 Finally, the tool packages the Wireguard configurations into scripts that install Wireguard and the respective configurations. 
 
-### Warning!!!
-The generated client scripts also open a netcat listener that listens on port 3000 that executes received commands in bash!!!!
-The purpose of it is to allow for an ssh server to be configured. The netcat listener runs 10 times, so after configuring the ssh server, reopen the connection until it doens't open anymore.
-Note: do not use this tool for malicious purposes! 
-
 The script is configured via a file named config.yml. Here's an example:
 
 ```yml
@@ -34,11 +29,18 @@ clients:
     pk: cXdwVxxxx # set your own public key
     ip: 10.0.0.2 # don't need to change this
     wg_install_cmd: pacman -S --noconfirm --needed wireguard-tools gnu-netcat
+	extra_cmds: echo success
   - filename: laptop
     sk: 6C4pxxxx
     pk: TJ0rxxxx
     ip: 10.0.0.3
+	silent_nohup: yes
     wg_install_cmd: pacman -S --noconfirm --needed wireguard-tools gnu-netcat
+  - filename: laptop
+    sk: 6C4pxxxx
+    pk: TJ0rxxxx
+    ip: 10.0.0.3
+    qrcode: yes
 
 # generate keys with
 # sk=$(wg genkey); pk=$(wg pubkey <<< $sk); echo -e "sk: $sk\npk: $pk"

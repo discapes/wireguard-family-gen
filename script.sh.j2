@@ -1,0 +1,27 @@
+#!/bin/bash
+
+{% if silent_nohup %}
+sudo nohup bash << EOF2 >/dev/null 2>/dev/null &
+{% else %}
+sudo bash <<EOF2
+{% endif %}
+
+
+{{ wg_install_cmd }}
+
+
+cat <<EOF> /etc/wireguard/wg0.conf
+{% if is_server %}
+{% include 'wg0.conf.server.j2' %}
+{% else %}
+{% include 'wg0.conf.client.j2' %}
+{% endif %}
+
+EOF
+
+
+systemctl enable wg-quick@wg0
+systemctl restart wg-quick@wg0
+iptables -A INPUT -i wg0 -j ACCEPT
+{{ extra_cmds }}
+EOF2

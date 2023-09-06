@@ -1,0 +1,11 @@
+[Interface]
+Address = {{ ip }}/32
+PrivateKey = {{ sk }}
+ListenPort = {{ port }}
+
+{% for client in clients %}
+[Peer]
+PublicKey = {{ client.pk }}
+AllowedIPs = {{ client.ip }}/32
+
+{% endfor %}

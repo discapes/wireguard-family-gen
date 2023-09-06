@@ -1,0 +1,9 @@
+[Interface]
+Address = {{ ip }}/32
+PrivateKey = {{ sk }}
+
+[Peer]
+PublicKey = {{ server.pk }}
+Endpoint =  {{ server.endpoint_ip }}:{{ server.port }}
+AllowedIPs = {{ server.network }}
+PersistentKeepalive = 25
