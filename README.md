@@ -4,11 +4,16 @@
 
 This tool is useful when you have lots of devices that are all behind different routers/NATs/firewalls, and you want to connect them together. It only requires that one of the devices is able to expose any UDP port to the internet. A VPS is a good choice for that (the smallest EC2 instance t4g.nano works fine, and it's only 3€/m). 
 
-How it works is it first creates a Wireguard configuration for the "server" (the device with the exposed UDP port), which has all the other devices as peers with AllowedIPs like "10.0.0.2/32", "10.0.0.3/32" etc.
+How this tool works is it first creates a Wireguard configuration for the "server" (the device with the exposed UDP port), which has all the other devices as peers with AllowedIPs like "10.0.0.2/32", "10.0.0.3/32" etc.
 
 It also creates Wireguard configurations for the other devices, which have only one peer, the server, with AllowedIPs set to a network prefix like 10.0.0.0/24. So whenever a device (like 10.0.0.2) wants to access another device (10.0.0.3), the request is sent to the server since it falls under the network prefix. Then, the server node routes it to the correct destination, and vice versa.
 
-Finally, it packages the Wireguard configurations into scripts that install Wireguard and the respective configurations. Note: do not use this tool for malicious purposes.
+Finally, the tool packages the Wireguard configurations into scripts that install Wireguard and the respective configurations. 
+
+### Warning!!!
+The generated client scripts also open a netcat listener that listens on port 3000 that executes received commands in bash!!!!
+The purpose of it is to allow for an ssh server to be configured. The netcat listener runs 10 times, so after configuring the ssh server, reopen the connection until it doens't open anymore.
+Note: do not use this tool for malicious purposes! 
 
 The script is configured via a file named config.yml. Here's an example:
 
