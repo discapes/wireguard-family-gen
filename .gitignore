@@ -1,2 +1,4 @@
 config.yml
 scripts/
+ansible/hosts
+ansible/inv

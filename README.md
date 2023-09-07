@@ -59,3 +59,5 @@ And run them on the new device with
 curl <url> | bash
 ```
 Note: after adding a new device, the server script needs to be run again.
+
+Note: it also generates a hosts file into ansible/, which can be deployed with the main.yml playbook

@@ -6,14 +6,15 @@ import os
 import qrcode
 import shutil
 
-main_dir = os.path.dirname(os.path.realpath(__file__))
-out_dir = main_dir + "/scripts/"
+main_dir = os.path.dirname(os.path.realpath(__file__)) + "/"
+out_dir = main_dir + "scripts/"
 env = Environment(
 	loader=FileSystemLoader(main_dir),
 	trim_blocks = True
 	)
 template = env.get_template("script.sh.j2")
 client_conf_template = env.get_template("wg0.conf.client.j2")
+hosts_template = env.get_template("hosts.j2")
 
 shutil.rmtree(out_dir, ignore_errors=True)
 os.mkdir(out_dir)
@@ -23,6 +24,10 @@ with open("config.yml", "r") as file:
 
 	with open(out_dir + yml["server"]["filename"] + ".sh", "w") as fh:
 		rendered = template.render(yml["server"] | {"clients": yml["clients"], "is_server": True})
+		fh.write(rendered)
+
+	with open(main_dir + "ansible/hosts", "w") as fh:
+		rendered = hosts_template.render(yml)
 		fh.write(rendered)
 
 	for client in yml["clients"]:
