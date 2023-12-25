@@ -5,6 +5,7 @@ sudo nohup bash << EOF2 >/dev/null 2>/dev/null &
 {% else %}
 sudo bash <<EOF2
 {% endif %}
+set -euo pipefail
 
 
 {{ wg_install_cmd }}

@@ -2,13 +2,15 @@
 
 > Tool to generate scripts to configure a Wireguard server and clients.
 
-This tool is useful when you have lots of devices that are all behind different routers/NATs/firewalls, and you want to connect them together. It only requires that one of the devices is able to expose any UDP port to the internet. A VPS is a good choice for that (the smallest EC2 instance t4g.nano works fine, and it's only 3€/m). 
+This tool is useful when you have lots of devices that are all behind different routers/NATs/firewalls, and you want to connect them together. It only requires that one of the devices is able to expose any UDP port to the internet. A VPS is a good choice for that (the smallest EC2 instance t4g.nano works fine, and it's only 3€/m).
 
 How this tool works is it first creates a Wireguard configuration for the "server" (the device with the exposed UDP port), which has all the other devices as peers with AllowedIPs like "10.0.0.2/32", "10.0.0.3/32" etc.
 
 It also creates Wireguard configurations for the other devices, which have only one peer, the server, with AllowedIPs set to a network prefix like 10.0.0.0/24. So whenever a device (like 10.0.0.2) wants to access another device (10.0.0.3), the request is sent to the server since it falls under the network prefix. Then, the server node routes it to the correct destination, and vice versa.
 
-Finally, the tool packages the Wireguard configurations into scripts that install Wireguard and the respective configurations. 
+Note: You might need to enable ipv4/ipv6 forwarding in the Linux kernel parameters of the server.
+
+Finally, the tool packages the Wireguard configurations into scripts that install Wireguard and the respective configurations.
 
 The script is configured via a file named config.yml. Here's an example:
 
@@ -46,18 +48,24 @@ clients:
 # sk=$(wg genkey); pk=$(wg pubkey <<< $sk); echo -e "sk: $sk\npk: $pk"
 ```
 
-After configuring the tool, you can generate the scripts with 
+After configuring the tool, you can generate the scripts with
+
 ```bash
 python main.py
 ```
+
 If you don't have ssh access, you can upload the scripts to paste.rs or similar services
+
 ```bash
 curl --data-binary @scripts/server.sh paste.rs -L
 ```
+
 And run them on the new device with
+
 ```bash
 curl <url> | bash
 ```
+
 Note: after adding a new device, the server script needs to be run again.
 
 Note: it also generates a hosts file into ansible/, which can be deployed with the main.yml playbook
